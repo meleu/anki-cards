@@ -60,10 +60,137 @@ metadata:
     key: $value
 spec:
   replicas: $number
-  template
+  template:
     $pod-metadata
     $pod-spec
   selector:
     matchLabels: # could be 'matchExpressions'
       pod-label-key: $pod-label-value
 ```
+
+
+## create a Pod yaml file from CLI
+
+```sh
+kubectl run \
+  redis --image=redis \
+  --dry-run=client \
+  -o yaml
+```
+
+
+## create a Deployment yaml from CLI
+
+```sh
+kubectl create deployment \
+  httpd-frontend \
+  --image=httpd:2.4-alpine \
+  --replicas=3 \
+  --dry-run=client \
+  -o yaml
+```
+
+
+## basic yaml for a Service NodePort 
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: $service-name
+spec:
+  type: NodePort
+  ports:
+    # ports config
+  selector:
+    key: $pods-label-value
+```
+
+## Service NodePort ports config
+
+```yaml
+- port: $service-port-connected-to-pods-port
+  targetPort: $pod-port
+  nodePort: $port-available-to-outworld
+```
+
+
+## Service NodePort image
+
+![](img/Service-NodePort.png)
+
+
+## What is ClusterIP Service used for?
+
+Allow communication between pods.
+(pods and their IPs are ephemeral)
+
+
+## basic yaml for Service ClusterIP
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: $service-name
+spec:
+  # optional (ClusterIP is the default)
+  type: ClusterIP 
+  ports:
+    - targetPort: $pods-port
+      port: $services-port
+  selector:
+    label-key: $label-value
+    # more labels key-values
+```
+
+## 6 basic components of a kubernetes cluster
+
+- API Server
+- etcd
+- Scheduler
+- Controller
+- Container Runtime
+- Kubelet
+
+## API Server responsibility
+
+Acts as a frontend for kubernetes.
+
+When you use the `kubectl` command, you're interacting with the API Server.
+
+## etcd responsibility
+
+It's a key-value store used to store the data needed to manage the cluster.
+
+
+## Controller responsibility
+
+Responsible to respond when containers/endpoints go down.
+
+## Scheduler responsibility
+
+Responsible to distribute work across multiple nodes.
+
+
+## Container Runtime responsibility
+
+Underlying software responsible to run the containers.
+
+
+## Kubelet responsibility
+
+An agent running on each node. Responsible to make sure the containers are running as expected.
+
+## Custom entries for container's `/etc/hosts` 
+
+Add `hostAliases` to PodSpec:
+```yaml
+spec:
+  hostAliases:
+    - ip: "127.0.0.1"
+      hostnames:
+        - "foo.local"
+```
+
+Note: any content in the container's `/etc/hosts` will be overwritten by kubernetes.
