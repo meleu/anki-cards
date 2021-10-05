@@ -194,3 +194,59 @@ spec:
 ```
 
 Note: any content in the container's `/etc/hosts` will be overwritten by kubernetes.
+
+
+## 2 ways to set env variables in kubernetes
+
+- ConfigMap
+- Secret
+
+
+## ConfigMap yaml file
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ${configMapName}
+data:
+  KEY: ${value}
+  KEY2: ${value2}
+```
+
+
+## Accessing the ConfigMap/Secret in Pods
+
+Basic usage: Filling the env vars with the ConfigMap/Secret contents.
+
+In a Pod's spec:
+```yaml
+containers:
+  - envFrom:
+    - configMapRef: # secretRef
+        name: ${configMapName}
+```
+**Note**: `name` indentation can be tricky.
+
+
+## 3 ways to reference ConfigMap/Secret in Pods
+
+- env vars from whole ConfigMap/Secret
+- a single env var from the ConfigMap/Secret
+- mount the ConfigMap/Secret in a volume
+
+
+## Mount a ConfigMap/Secret in a volume
+
+In a Pod's spec:
+```yaml
+containers:
+  volumes:
+  - name: ${appConfigVolume}
+    configMap: # secret
+      name: ${configMapName}
+```
+It creates a directory `/opt/${configMapName}` with the contents of the ConfigMap/Secret in files.
+
+
+
