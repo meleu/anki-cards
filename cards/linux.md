@@ -1,4 +1,4 @@
-# DevOps::linux
+# linux
 
 ## Log dos pacotes instalados (debian-based)
 
