@@ -21,3 +21,23 @@ echo "${fileName%.*}"
 ```bash
 echo "${fileName##*.}
 ```
+
+
+## Use quotes to assign values from a var to an array
+
+Problematic code:
+```bash
+array=( $var )
+```
+
+Safer code for multiple lines:
+```bash
+mapfile -t array <<< "${var}"
+```
+
+Safer code for space separated values:
+```bash
+IFS=' ' read -ra array <<< "${var}"
+```
+
+Source: SC2206

@@ -316,7 +316,8 @@ restarts:.status.containerStatuses[].restartCount
 ## Create a Secret from command line
 
 ```bash
-kubectl create secret generic secretName \
+kubectl create secret generic \
+  secretName \
   --from-literal key1=value1 \
   --from-literal keyN=valueN
 ```
