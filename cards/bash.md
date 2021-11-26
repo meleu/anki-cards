@@ -41,3 +41,25 @@ IFS=' ' read -ra array <<< "${var}"
 ```
 
 Source: SC2206
+
+
+## You can't export arrays in bash. There's a workaround though.
+
+```bash
+declare -A ARRAY
+#- fill the array
+
+#- "exporting" it:
+declare -p ARRAY > /tmp/ARRAY
+
+#- "importing" it:
+source /tmp/ARRAY
+```
+
+## Best way to get the scriptDir
+
+```bash
+readonly scriptDir="$(
+  cd "$(dirname "$0")" && pwd
+)"
+```
