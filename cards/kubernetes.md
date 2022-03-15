@@ -497,3 +497,91 @@ kubectl expose deployment \
 
 1. the deployment must exist
 2. nodePort should be added to the file
+
+
+## Ingress TLS Configuration
+
+You need to reference the Secret with the TLS in the spec section:
+```yaml
+kind: Ingress
+#- ...
+spec:
+  tls:
+  - hosts:
+    - myapp.com
+    secretName: myapp-secret-tls
+```
+
+## Secret component with TLS Configuration
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: myapp-secret-tls
+  namespace: default
+type: kubernetes.io/tls
+data:
+  #- the values here must
+  #- be the file content
+  tls.crt: base64 encoded cert
+  tls.key: base64 encoded key
+```
+
+
+## Most basic Ingress config
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dashboard-ingress
+  namespace: kubernetes-dashboard
+spec:
+  rules:
+  - host: dashboard.com
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kubernetes-dashboard
+            port:
+              number: 80
+```
+
+
+## 3 components of kubernetes storage
+
+1. Persistent Volume
+2. Persistent Volume Claim
+3. Storage Class
+
+
+## 3 requirementes for reliable kubernetes storage
+
+A reliable storage:
+
+1. Must **not** depend on the pod's lifecycle (pods are ephemeral)
+2. Must be available on all nodes
+3. Needs to survive even if the whole cluster crashes
+
+
+## How Persistent Volumes are used?
+
+1. Cluster admins configure storage
+2. Cluster admins create `PersistentVolume`s
+3. Users claim Persistent Volumes through `PersistentVolumeClaim`
+4. Users make their pod's use the PVC in the Pod's spec
+
+
+## Which problem the StorageClass component solves?
+
+When a Persistent Volume Claim requests a StorageClass, the Storage Class
+automatically creates a Persistent Volume.
+
+This is specially useful in large clusters, where a Storage Class avoids the
+tedious task of creating hundreds of Persistent Volumes manually.
+
+
